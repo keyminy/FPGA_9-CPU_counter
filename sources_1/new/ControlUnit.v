@@ -4,10 +4,13 @@ module ControlUnit (
     input clk,
     input reset,
     input ALt10,
+    input RepeatLt,
     //
     output reg ASrcMuxSel,
+    output reg SumSrcMuxSel,
     output reg ALoad,
-    output reg OutPort
+    output reg OutPort,
+    output reg SumLoad
     );
     reg [2:0] state,next_state;
 
@@ -32,37 +35,49 @@ module ControlUnit (
         ASrcMuxSel  = 1'b0;
         ALoad       = 1'b0;
         OutPort     = 1'b0;
+        SumLoad     = 1'b0;
         next_state = S1;
         // Moore machine
         case (state)
-            S0: begin
+            S0: begin // A = 0
+                SumLoad       = 1'b1;
                 ASrcMuxSel  = 1'b0;
+                SumSrcMuxSel= 1'b0;
                 ALoad       = 1'b1;
+                SumLoad     = 1'b1;
                 OutPort     = 1'b0;
                 next_state = S1;
             end 
-            S1 : begin
+            S1 : begin // A < 10
                 ASrcMuxSel  = 1'b0;
+                SumSrcMuxSel = 1'b0;
                 ALoad       = 1'b0;
+                SumLoad     = 1'b0;
                 OutPort     = 1'b0;
                 if(ALt10) next_state = S2;
                 else next_state = S4;
             end
-            S2 : begin
+            S2 : begin // Output = A
                 ASrcMuxSel  = 1'b0;
+                SumSrcMuxSel = 1'b0;
                 ALoad       = 1'b0;
+                SumLoad     = 1'b1;
                 OutPort     = 1'b1;
                 next_state = S3;
             end
-            S3 : begin
+            S3 : begin // A = A+1
                 ASrcMuxSel  = 1'b1;
+                SumSrcMuxSel = 1'b1;
                 ALoad       = 1'b1;
+                SumLoad     = 1'b0;
                 OutPort     = 1'b0;
                 next_state = S1;
             end
-            S4 : begin
+            S4 : begin // HALT
                 ASrcMuxSel  = 1'b0;
+                SumSrcMuxSel = 1'b0;
                 ALoad       = 1'b0;
+                SumLoad     = 1'b0;
                 OutPort     = 1'b0;
                 next_state = S4;
             end

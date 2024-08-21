@@ -32,13 +32,17 @@ module top_counter(
     );
 
     wire w_ASrcMuxSel, w_ALoad, w_ALt10, w_OutPort;
+    wire w_SumLoad, w_SumSrcMuxSel;
     wire w_clk_10hz;
 
     Datapath U_DP(
-    .clk(w_clk_10hz),
+    .clk(clk),
+    // .clk(w_clk_10hz),
     .reset(reset),
     .ASrcMuxSel(w_ASrcMuxSel),
+    .SumSrcMuxSel(w_SumSrcMuxSel),
     .ALoad(w_ALoad),
+    .SumLoad(w_SumLoad),
     .OutPort(w_OutPort),
     //
     .ALt10(w_ALt10),
@@ -46,13 +50,16 @@ module top_counter(
     );
 
     ControlUnit U_CU(
-    .clk(w_clk_10hz),
+    .clk(clk),
+    // .clk(w_clk_10hz),
     .reset(reset),
     .ALt10(w_ALt10),
     //
     .ASrcMuxSel(w_ASrcMuxSel),
+    .SumSrcMuxSel(w_SumSrcMuxSel),
     .ALoad(w_ALoad),
-    .OutPort(w_OutPort)
+    .OutPort(w_OutPort),
+    .SumLoad(w_SumLoad)
     );
 
     clk_div # (
